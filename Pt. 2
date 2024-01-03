@@ -1,0 +1,35 @@
+import time
+import multiprocessing
+
+def factorize(numbers):
+    results = []
+    for num in numbers:
+        factors = [i for i in range(1, num + 1) if num % i == 0]
+        results.append(factors)
+    return results
+
+def factorize_single(num):
+    factors = [i for i in range(1, num + 1) if num % i == 0]
+    return factors
+
+def factorize_parallel(numbers):
+    with multiprocessing.Pool() as pool:
+        results = pool.map(factorize_single, numbers)
+    return results
+
+# Приклад вхідного списку чисел
+numbers = [24, 36, 45, 64, 81]
+
+start_time_sync = time.time()
+result_sync = factorize(numbers)
+end_time_sync = time.time()
+
+print("Синхронна версія зайняла час:", end_time_sync - start_time_sync, "секунд")
+print("Результати синхронної версії:", result_sync)
+
+start_time_parallel = time.time()
+result_parallel = factorize_parallel(numbers)
+end_time_parallel = time.time()
+
+print("Паралельна версія зайняла час:", end_time_parallel - start_time_parallel, "секунд")
+print("Результати паралельної версії:", result_parallel)
