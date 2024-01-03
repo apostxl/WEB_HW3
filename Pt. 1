@@ -1,0 +1,29 @@
+import os
+from concurrent.futures import ThreadPoolExecutor
+from collections import defaultdict
+import shutil
+
+def get_files_by_extension(folder_path):
+    files_by_extension = defaultdict(list)
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            _, extension = os.path.splitext(file)
+            files_by_extension[extension].append(file_path)
+    return files_by_extension
+
+def move_files(destination_folder, files):
+    for file in files:
+        shutil.move(file, destination_folder)
+
+def process_folder(folder_path, destination_folder, num_threads=5):
+    files_by_extension = get_files_by_extension(folder_path)
+    
+    with ThreadPoolExecutor(max_workers=num_threads) as executor:
+        for extension, files in files_by_extension.items():
+            executor.submit(move_files, destination_folder, files)
+
+
+source_folder = "шлях_до_папки_Хлам"
+destination_folder = "шлях_до_цільної_папки"
+process_folder(source_folder, destination_folder)
